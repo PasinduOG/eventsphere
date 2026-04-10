@@ -29,9 +29,7 @@ public class UserServiceImpl implements UserService {
         return new UserResponse(
                 user.getId(),
                 user.getFullName(),
-                user.getEmail(),
-                user.getRole(),
-                user.getSkillsAndInterests()
+                user.getRole()
         );
     }
 }
