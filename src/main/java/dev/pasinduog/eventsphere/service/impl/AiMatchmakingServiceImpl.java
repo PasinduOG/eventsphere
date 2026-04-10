@@ -88,12 +88,11 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
 
         prompt.append("Target User:\n");
         prompt.append("- ID: ").append(targetUser.getId()).append("\n");
-        prompt.append("- Name: ").append(targetUser.getFullName()).append("\n");
         prompt.append("- Skills: ").append(targetUser.getSkillsAndInterests()).append("\n\n");
 
         prompt.append("Available Attendees to match with:\n");
         for (User u : otherUsers) {
-            prompt.append("- ID: ").append(u.getId()).append(" | Name: ").append(u.getFullName())
+            prompt.append("- ID: ").append(u.getId())
                     .append(" | Skills: ").append(u.getSkillsAndInterests()).append("\n");
         }
 
