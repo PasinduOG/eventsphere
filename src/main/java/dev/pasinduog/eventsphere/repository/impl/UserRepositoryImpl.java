@@ -1,9 +1,10 @@
 package dev.pasinduog.eventsphere.repository.impl;
 
+import dev.pasinduog.eventsphere.exception.UserAlreadyExistsException;
 import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -29,18 +30,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean save(User user) {
+    public void save(User user) {
         try {
             String sql = "INSERT INTO users (id, full_name, email, role, password_hash, skills_and_interests) VALUES (?,?,?,?,?,?)";
-            return jdbcTemplate.update(sql,
+            jdbcTemplate.update(sql,
                     user.getId(),
                     user.getFullName(),
                     user.getEmail(),
                     user.getRole(),
                     user.getPasswordHash(),
-                    user.getSkillsAndInterests()) > 0;
-        } catch (DataAccessException e) {
-            return false;
+                    user.getSkillsAndInterests());
+        } catch (DuplicateKeyException e) {
+            throw new UserAlreadyExistsException(user.getEmail(), e);
         }
     }
 
