@@ -1,5 +1,6 @@
 package dev.pasinduog.eventsphere.controller;
 
+import dev.pasinduog.eventsphere.dto.UserResponse;
 import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,5 +17,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     boolean registerUser(@RequestBody User user) {
         return userService.registerUser(user);
+    }
+
+    @GetMapping("/by-email")
+    UserResponse getUserByEmail(@RequestParam String email) {
+        return userService.getUserByEmail(email);
     }
 }

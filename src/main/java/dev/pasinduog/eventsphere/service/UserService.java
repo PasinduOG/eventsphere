@@ -1,7 +1,9 @@
 package dev.pasinduog.eventsphere.service;
 
+import dev.pasinduog.eventsphere.dto.UserResponse;
 import dev.pasinduog.eventsphere.model.User;
 
 public interface UserService {
     boolean registerUser(User user);
+    UserResponse getUserByEmail(String email);
 }
