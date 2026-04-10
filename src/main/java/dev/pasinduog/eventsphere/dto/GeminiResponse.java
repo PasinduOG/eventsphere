@@ -8,9 +8,21 @@ public record GeminiResponse(List<Candidate> candidates) {
     public record Part(String text) {}
 
     public String getExtractedText() {
-        if (candidates != null && !candidates.isEmpty()) {
-            return candidates.get(0).content().parts().get(0).text();
+        if (candidates == null || candidates.isEmpty()) {
+            return "";
         }
-        return "";
+        Candidate candidate = candidates.get(0);
+        if (candidate.content() == null) {
+            return "";
+        }
+        List<Part> parts = candidate.content().parts();
+        if (parts == null || parts.isEmpty()) {
+            return "";
+        }
+        return parts.stream()
+                .map(Part::text)
+                .filter(t -> t != null && !t.isBlank())
+                .findFirst()
+                .orElse("");
     }
 }
