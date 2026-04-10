@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -37,5 +38,10 @@ public class EventServiceImpl implements EventService {
             throw new OutOfReachException("Maximum number of attendees reached");
         }
         return eventRegistrationRepository.saveRegistration(eventId, userId);
+    }
+
+    @Override
+    public List<Event> getUpcomingEvents() {
+        return eventRepository.findUpcomingEvents();
     }
 }
