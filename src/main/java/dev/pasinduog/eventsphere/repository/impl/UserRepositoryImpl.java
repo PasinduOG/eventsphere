@@ -30,16 +30,16 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void save(User user) {
+    public boolean save(User user) {
         try {
             String sql = "INSERT INTO users (id, full_name, email, role, password_hash, skills_and_interests) VALUES (?,?,?,?,?,?)";
-            jdbcTemplate.update(sql,
+            return jdbcTemplate.update(sql,
                     user.getId(),
                     user.getFullName(),
                     user.getEmail(),
                     user.getRole(),
                     user.getPasswordHash(),
-                    user.getSkillsAndInterests());
+                    user.getSkillsAndInterests()) > 0;
         } catch (DuplicateKeyException e) {
             throw new UserAlreadyExistsException(user.getEmail(), e);
         }
