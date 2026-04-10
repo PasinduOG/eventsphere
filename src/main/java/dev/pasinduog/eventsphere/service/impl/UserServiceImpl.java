@@ -14,8 +14,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public boolean registerUser(User user) {
+    public String registerUser(User user) {
         user.setId(UUID.randomUUID().toString());
-        return userRepository.save(user);
+        userRepository.save(user);
+        return user.getId();
     }
 }
