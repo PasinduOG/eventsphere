@@ -5,6 +5,7 @@ import dev.pasinduog.eventsphere.dto.AiMatchResult;
 import dev.pasinduog.eventsphere.dto.GeminiRequest;
 import dev.pasinduog.eventsphere.dto.GeminiResponse;
 import dev.pasinduog.eventsphere.exception.AiMatchmakingException;
+import dev.pasinduog.eventsphere.exception.UserNotFoundException;
 import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.repository.AiMatchSuggestionRepository;
 import dev.pasinduog.eventsphere.repository.UserRepository;
@@ -33,7 +34,7 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
     @Override
     public AiMatchResult generateMatchesForUser(String eventId, String targetUserId) {
         User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + targetUserId));
 
         List<User> otherUsers = userRepository.findAll().stream()
                 .filter(u -> !u.getId().equals(targetUserId))
