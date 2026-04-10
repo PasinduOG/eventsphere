@@ -47,8 +47,13 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
                 .retrieve()
                 .body(GeminiResponse.class);
 
-        assert response != null;
+        if (response == null) {
+            throw new AiMatchmakingException("Received null response from Gemini API");
+        }
         String aiResultString = response.getExtractedText();
+        if (aiResultString == null || aiResultString.isBlank()) {
+            throw new AiMatchmakingException("Gemini API returned an empty response");
+        }
 
         try {
             String cleanJson = aiResultString.replace("```json", "").replace("```", "").trim();
