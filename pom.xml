@@ -82,6 +82,12 @@
             <version>3.0.2</version>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.og4dev</groupId>
+            <artifactId>og4dev-spring-response</artifactId>
+            <version>1.4.0</version>
+        </dependency>
     </dependencies>
 
 </project>

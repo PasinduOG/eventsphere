@@ -1,6 +1,6 @@
 package dev.pasinduog.eventsphere.repository.impl;
 
-import dev.pasinduog.eventsphere.exception.UserAlreadyExistsException;
+import dev.pasinduog.eventsphere.exception.UserEmailAlreadyExistsException;
 import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class UserRepositoryImpl implements UserRepository {
                     user.getPasswordHash(),
                     user.getSkillsAndInterests()) > 0;
         } catch (DuplicateKeyException e) {
-            throw new UserAlreadyExistsException(user.getEmail(), e);
+            throw new UserEmailAlreadyExistsException(user.getEmail());
         }
     }
 

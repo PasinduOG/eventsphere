@@ -1,7 +1,10 @@
 package dev.pasinduog.eventsphere.exception;
 
-public class UserAlreadyExistsException extends RuntimeException {
-    public UserAlreadyExistsException(String email, Throwable cause) {
-        super("A user with email '" + email + "' already exists", cause);
+import io.github.og4dev.exception.ApiException;
+import org.springframework.http.HttpStatus;
+
+public class UserAlreadyExistsException extends ApiException {
+    public UserAlreadyExistsException(String id) {
+        super("A user with ID '" + id + "' already exists", HttpStatus.CONFLICT);
     }
 }
