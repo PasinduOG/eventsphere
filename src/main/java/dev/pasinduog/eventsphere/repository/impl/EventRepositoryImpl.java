@@ -51,13 +51,13 @@ public class EventRepositoryImpl implements EventRepository {
 
     @Override
     public Optional<Event> findById(String id) {
-        String sql =  "SELECT (id, organizer_id, title, description, start_time, end_time, max_attendees, status, created_at) FROM events WHERE id = ?";
+        String sql =  "SELECT id, organizer_id, title, description, start_time, end_time, max_attendees, status, created_at FROM events WHERE id = ?";
         return jdbcTemplate.query(sql, rowMapper(), id).stream().findFirst();
     }
 
     @Override
     public List<Event> findUpcomingEvents() {
-        String sql =  "SELECT (id, organizer_id, title, description, start_time, end_time, max_attendees, status, created_at)" +
+        String sql =  "SELECT id, organizer_id, title, description, start_time, end_time, max_attendees, status, created_at" +
                 " FROM events WHERE status = 'UPCOMING' AND start_time > NOW() ORDER BY start_time";
         return jdbcTemplate.query(sql, rowMapper());
     }
