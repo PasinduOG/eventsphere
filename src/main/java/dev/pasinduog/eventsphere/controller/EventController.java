@@ -7,12 +7,19 @@ import dev.pasinduog.eventsphere.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/events")
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
     private final AiMatchmakingService aiMatchmakingService;
+
+    @GetMapping("/upcoming")
+    List<Event> getUpcomingEvents() {
+        return eventService.getUpcomingEvents();
+    }
 
     @PostMapping
     boolean createEvent(@RequestBody Event event){
