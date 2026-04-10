@@ -8,6 +8,7 @@ import dev.pasinduog.eventsphere.exception.AiMatchmakingException;
 import dev.pasinduog.eventsphere.exception.UserNotFoundException;
 import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.repository.AiMatchSuggestionRepository;
+import dev.pasinduog.eventsphere.repository.EventRegistrationRepository;
 import dev.pasinduog.eventsphere.repository.UserRepository;
 import dev.pasinduog.eventsphere.service.AiMatchmakingService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
     private final AiMatchSuggestionRepository aiMatchSuggestionRepository;
+    private final EventRegistrationRepository eventRegistrationRepository;
 
     @Value("${gemini.api.key}")
     private String apiKey;
@@ -34,13 +37,20 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
     @Override
     public AiMatchResult generateMatchesForUser(String eventId, String targetUserId) {
         User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id " + targetUserId));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        List<User> otherUsers = userRepository.findAll().stream()
+        List<String> registeredUserIds = eventRegistrationRepository.findUserIdsByEventId(eventId);
+
+        if (!registeredUserIds.contains(targetUserId)) {
+            throw new UserNotFoundException("Target user is not registered for this event!");
+        }
+
+        List<User> attendeesForMatchmaking = userRepository.findAll().stream()
+                .filter(u -> registeredUserIds.contains(u.getId()))
                 .filter(u -> !u.getId().equals(targetUserId))
                 .toList();
 
-        String prompt = buildPrompt(targetUser, otherUsers);
+        String prompt = buildPrompt(targetUser, attendeesForMatchmaking);
 
         GeminiResponse response = restClient.post()
                 .uri(apiUrl + "?key=" + apiKey)
@@ -48,7 +58,7 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
                 .retrieve()
                 .body(GeminiResponse.class);
 
-        assert response != null;
+        Objects.requireNonNull(response, "Gemini API response cannot be null");
         String aiResultString = response.getExtractedText();
 
         try {
