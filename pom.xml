@@ -80,7 +80,7 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>3.0.2</version>
-            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
