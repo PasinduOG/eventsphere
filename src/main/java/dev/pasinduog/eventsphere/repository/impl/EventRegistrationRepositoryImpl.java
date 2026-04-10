@@ -7,6 +7,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -29,5 +30,11 @@ public class EventRegistrationRepositoryImpl implements EventRegistrationReposit
         String sql = "SELECT count(*) FROM event_registrations WHERE event_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, eventId);
         return count != null ? count : 0;
+    }
+
+    @Override
+    public List<String> findUserIdsByEventId(String eventId) {
+        String sql = "SELECT user_id FROM event_registrations WHERE event_id = ?";
+        return jdbcTemplate.queryForList(sql, String.class, eventId);
     }
 }

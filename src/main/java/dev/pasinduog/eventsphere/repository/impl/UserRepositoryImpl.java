@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -55,5 +56,11 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByEmail(String email) {
         String sql = "SELECT id, full_name, email, role, skills_and_interests, created_at FROM users WHERE email = ?";
         return jdbcTemplate.query(sql, rowMapper(), email).stream().findFirst();
+    }
+
+    @Override
+    public List<User> findAll() {
+        String sql = "SELECT id, full_name, email, role, skills_and_interests, created_at FROM users";
+        return jdbcTemplate.query(sql, rowMapper());
     }
 }

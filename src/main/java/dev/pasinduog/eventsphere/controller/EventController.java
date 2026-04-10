@@ -1,6 +1,8 @@
 package dev.pasinduog.eventsphere.controller;
 
+import dev.pasinduog.eventsphere.dto.AiMatchResult;
 import dev.pasinduog.eventsphere.model.Event;
+import dev.pasinduog.eventsphere.service.AiMatchmakingService;
 import dev.pasinduog.eventsphere.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
+    private final AiMatchmakingService aiMatchmakingService;
 
     @PostMapping
     boolean createEvent(@RequestBody Event event){
@@ -19,5 +22,10 @@ public class EventController {
     @PostMapping("/{eventId}/register")
     boolean registerEvent(@PathVariable String eventId, @RequestParam String userId){
         return eventService.registerUserForEvent(eventId, userId);
+    }
+
+    @PostMapping("/{eventId}/matchmaking")
+    AiMatchResult generateNetworkingMatches(@PathVariable String eventId, @RequestParam String userId){
+        return aiMatchmakingService.generateMatchesForUser(eventId, userId);
     }
 }
