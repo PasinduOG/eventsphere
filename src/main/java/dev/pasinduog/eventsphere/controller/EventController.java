@@ -1,6 +1,7 @@
 package dev.pasinduog.eventsphere.controller;
 
 import dev.pasinduog.eventsphere.dto.AiMatchResult;
+import dev.pasinduog.eventsphere.dto.MatchSuggestionResponse;
 import dev.pasinduog.eventsphere.model.Event;
 import dev.pasinduog.eventsphere.service.AiMatchmakingService;
 import dev.pasinduog.eventsphere.service.EventService;
@@ -19,6 +20,11 @@ public class EventController {
     @GetMapping("/upcoming")
     List<Event> getUpcomingEvents() {
         return eventService.getUpcomingEvents();
+    }
+
+    @GetMapping("/{eventId}/matches")
+    List<MatchSuggestionResponse> getMatchSuggestions(@PathVariable String eventId, @RequestParam String userId) {
+        return aiMatchmakingService.getMatchSuggestions(eventId, userId);
     }
 
     @PostMapping

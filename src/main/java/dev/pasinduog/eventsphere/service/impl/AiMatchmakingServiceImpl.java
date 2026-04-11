@@ -1,11 +1,10 @@
 package dev.pasinduog.eventsphere.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.pasinduog.eventsphere.dto.AiMatchResult;
-import dev.pasinduog.eventsphere.dto.GeminiRequest;
-import dev.pasinduog.eventsphere.dto.GeminiResponse;
+import dev.pasinduog.eventsphere.dto.*;
 import dev.pasinduog.eventsphere.exception.AiMatchmakingException;
 import dev.pasinduog.eventsphere.exception.UserNotFoundException;
+import dev.pasinduog.eventsphere.model.AiMatchSuggestion;
 import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.repository.AiMatchSuggestionRepository;
 import dev.pasinduog.eventsphere.repository.EventRegistrationRepository;
@@ -105,5 +104,30 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
         prompt.append("}");
 
         return prompt.toString();
+    }
+
+    @Override
+    public List<MatchSuggestionResponse> getMatchSuggestions(String eventId, String targetUserId) {
+        List<AiMatchSuggestion> rowMatches = aiMatchSuggestionRepository.findMatchesByEventAndUser(eventId, targetUserId);
+        return rowMatches.stream().map(match -> {
+
+            User suggestedUser = userRepository.findById(match.getSuggestedUserId())
+                    .orElseThrow(() -> new UserNotFoundException("Suggested user not found"));
+
+            UserResponse userResponse = new UserResponse(
+                    suggestedUser.getId(),
+                    suggestedUser.getFullName(),
+                    suggestedUser.getEmail(),
+                    suggestedUser.getRole(),
+                    suggestedUser.getSkillsAndInterests()
+            );
+
+            return new MatchSuggestionResponse(
+                    match.getId(),
+                    match.getMatchScore(),
+                    match.getMatchReason(),
+                    userResponse
+            );
+        }).toList();
     }
 }
