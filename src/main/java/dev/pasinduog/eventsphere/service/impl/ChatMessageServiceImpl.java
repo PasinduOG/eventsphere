@@ -5,9 +5,9 @@ import dev.pasinduog.eventsphere.dto.ChatMessageResponse;
 import dev.pasinduog.eventsphere.repository.ChatMessageRepository;
 import dev.pasinduog.eventsphere.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository
+@Service
 @RequiredArgsConstructor
 public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
