@@ -30,7 +30,8 @@ public class AiMatchSuggestionRepositoryImpl implements AiMatchSuggestionReposit
 
     @Override
     public List<AiMatchSuggestion> findMatchesByEventAndUser(String eventId, String targetUserId) {
-        String sql = "SELECT * FROM ai_match_suggestions WHERE event_id = ? AND target_user_id = ? ORDER BY match_score DESC";
+        String sql = "SELECT id, event_id, target_user_id, suggested_user_id, match_score, match_reason " +
+                "FROM ai_match_suggestions WHERE event_id = ? AND target_user_id = ? ORDER BY match_score DESC";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new AiMatchSuggestion(
                 rs.getString("id"),
                 rs.getString("event_id"),
