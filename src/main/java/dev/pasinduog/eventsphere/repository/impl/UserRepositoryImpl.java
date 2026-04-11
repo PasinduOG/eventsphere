@@ -47,6 +47,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public boolean update(User user) {
+        String sql = "UPDATE users SET full_name = ?, skills_and_interests = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, user.getFullName(), user.getSkillsAndInterests(), user.getId()) > 0;
+    }
+
+    @Override
     public Optional<User> findById(String id) {
         String sql = "SELECT id, full_name, email, `role`, skills_and_interests, created_at FROM users WHERE id = ?";
         return jdbcTemplate.query(sql, rowMapper(), id).stream().findFirst();

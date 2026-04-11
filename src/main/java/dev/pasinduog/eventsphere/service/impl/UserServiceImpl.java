@@ -47,4 +47,15 @@ public class UserServiceImpl implements UserService {
                 user.getSkillsAndInterests()
         );
     }
+
+    @Override
+    public User getUserById(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+    }
+
+    @Override
+    public boolean updateUser(User user) {
+        return userRepository.update(user);
+    }
 }

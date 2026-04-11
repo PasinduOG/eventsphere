@@ -9,6 +9,14 @@ spring:
     enabled: true
     baseline-on-migrate: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+
 gemini:
   api:
     url: https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
