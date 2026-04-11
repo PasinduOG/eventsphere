@@ -1,7 +1,7 @@
 package dev.pasinduog.eventsphere.controller;
 
+import dev.pasinduog.eventsphere.dto.RegisterRequest;
 import dev.pasinduog.eventsphere.dto.UserResponse;
-import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,8 +15,8 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    boolean registerUser(@RequestBody User user) {
-        return userService.registerUser(user);
+    boolean registerUser(@RequestBody RegisterRequest request) {
+        return userService.registerUser(request);
     }
 
     @GetMapping("/by-email")
