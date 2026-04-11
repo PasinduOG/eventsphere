@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.pasinduog.eventsphere.dto.AiMatchResult;
 import dev.pasinduog.eventsphere.dto.GeminiRequest;
 import dev.pasinduog.eventsphere.dto.GeminiResponse;
+import dev.pasinduog.eventsphere.dto.UserResponse;
+import dev.pasinduog.eventsphere.dto.MatchSuggestionResponse;
 import dev.pasinduog.eventsphere.exception.AiMatchmakingException;
 import dev.pasinduog.eventsphere.exception.UserNotFoundException;
+import dev.pasinduog.eventsphere.model.AiMatchSuggestion;
 import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.repository.AiMatchSuggestionRepository;
 import dev.pasinduog.eventsphere.repository.EventRegistrationRepository;
@@ -105,5 +108,48 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
         prompt.append("}");
 
         return prompt.toString();
+    }
+
+    @Override
+    public List<MatchSuggestionResponse> getMatchSuggestions(String eventId, String targetUserId) {
+        List<AiMatchSuggestion> rowMatches = aiMatchSuggestionRepository.findMatchesByEventAndUser(eventId, targetUserId);
+        if (rowMatches.isEmpty()) {
+            return List.of();
+        }
+
+        List<String> suggestedUserIds = rowMatches.stream()
+                .map(AiMatchSuggestion::getSuggestedUserId)
+                .toList();
+
+        List<User> suggestedUsers = userRepository.findByIds(suggestedUserIds);
+        java.util.Map<String, User> userMap = suggestedUsers.stream()
+                .collect(java.util.stream.Collectors.toMap(User::getId, u -> u));
+
+        return rowMatches.stream().map(match -> {
+            User suggestedUser = userMap.get(match.getSuggestedUserId());
+
+            if (suggestedUser == null) {
+                throw new UserNotFoundException(
+                        "Suggested user not found: suggestedUserId=" + match.getSuggestedUserId()
+                                + ", matchId=" + match.getId()
+                                + ", eventId=" + eventId
+                                + ", targetUserId=" + targetUserId);
+            }
+
+            UserResponse userResponse = new UserResponse(
+                    suggestedUser.getId(),
+                    suggestedUser.getFullName(),
+                    suggestedUser.getEmail(),
+                    suggestedUser.getRole(),
+                    suggestedUser.getSkillsAndInterests()
+            );
+
+            return new MatchSuggestionResponse(
+                    match.getId(),
+                    match.getMatchScore(),
+                    match.getMatchReason(),
+                    userResponse
+            );
+        }).toList();
     }
 }

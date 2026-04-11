@@ -33,7 +33,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean save(User user) {
         try {
-            String sql = "INSERT INTO users (id, full_name, email, role, password_hash, skills_and_interests) VALUES (?,?,?,?,?,?)";
+            String sql = "INSERT INTO users (id, full_name, email, `role`, password_hash, skills_and_interests) VALUES (?,?,?,?,?,?)";
             return jdbcTemplate.update(sql,
                     user.getId(),
                     user.getFullName(),
@@ -48,19 +48,29 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findById(String id) {
-        String sql = "SELECT id, full_name, email, role, skills_and_interests, created_at FROM users WHERE id = ?";
+        String sql = "SELECT id, full_name, email, `role`, skills_and_interests, created_at FROM users WHERE id = ?";
         return jdbcTemplate.query(sql, rowMapper(), id).stream().findFirst();
     }
 
     @Override
+    public List<User> findByIds(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        String inSql = String.join(",", java.util.Collections.nCopies(ids.size(), "?"));
+        String sql = "SELECT id, full_name, email, `role`, skills_and_interests, created_at FROM users WHERE id IN (" + inSql + ")";
+        return jdbcTemplate.query(sql, rowMapper());
+    }
+
+    @Override
     public Optional<User> findByEmail(String email) {
-        String sql = "SELECT id, full_name, email, role, skills_and_interests, created_at FROM users WHERE email = ?";
+        String sql = "SELECT id, full_name, email, `role`, skills_and_interests, created_at FROM users WHERE email = ?";
         return jdbcTemplate.query(sql, rowMapper(), email).stream().findFirst();
     }
 
     @Override
     public List<User> findAll() {
-        String sql = "SELECT id, full_name, email, role, skills_and_interests, created_at FROM users";
+        String sql = "SELECT id, full_name, email, `role`, skills_and_interests, created_at FROM users";
         return jdbcTemplate.query(sql, rowMapper());
     }
 }
