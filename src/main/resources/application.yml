@@ -17,7 +17,12 @@ spring:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
 
-gemini:
+Gemini:
   api:
     url: https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
     key: ${GEMINI_API_KEY}
+
+security:
+  jwt:
+    key: ${JWT_KEY}
+    expiration: 1640995200

@@ -31,7 +31,7 @@ public class UserController {
     boolean updateProfile(@PathVariable String userId, @RequestBody Map<String, String> updates){
         User user = userService.getUserById(userId);
         if (updates.containsKey("skillsAndInterests")) user.setSkillsAndInterests(updates.get("skillsAndInterests"));
-        if (updates.containsKey("fullName")) user.setSkillsAndInterests(updates.get("fullName"));
+        if (updates.containsKey("fullName")) user.setFullName(updates.get("fullName"));
         return userService.updateUser(user);
     }
 }
