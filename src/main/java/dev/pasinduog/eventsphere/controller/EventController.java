@@ -6,6 +6,7 @@ import dev.pasinduog.eventsphere.model.Event;
 import dev.pasinduog.eventsphere.service.AiMatchmakingService;
 import dev.pasinduog.eventsphere.service.EventService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,11 +29,13 @@ public class EventController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ORGANIZER') or hasAuthority('ADMIN')")
     boolean createEvent(@RequestBody Event event){
         return eventService.createEvent(event);
     }
 
     @PostMapping("/{eventId}/register")
+    @PreAuthorize("isAuthenticated()")
     boolean registerEvent(@PathVariable String eventId, @RequestParam String userId){
         return eventService.registerUserForEvent(eventId, userId);
     }

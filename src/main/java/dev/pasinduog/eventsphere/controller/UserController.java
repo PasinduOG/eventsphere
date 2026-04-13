@@ -6,6 +6,7 @@ import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -28,6 +29,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/profile")
+    @PreAuthorize("isAuthenticated()")
     boolean updateProfile(@PathVariable String userId, @RequestBody Map<String, String> updates){
         User user = userService.getUserById(userId);
         if (updates.containsKey("skillsAndInterests")) user.setSkillsAndInterests(updates.get("skillsAndInterests"));

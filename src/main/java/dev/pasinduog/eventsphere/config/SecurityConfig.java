@@ -1,13 +1,12 @@
 package dev.pasinduog.eventsphere.config;
 
 import dev.pasinduog.eventsphere.filter.JwtAuthFilter;
-import dev.pasinduog.eventsphere.model.User;
-import dev.pasinduog.eventsphere.repository.UserRepository;
 import dev.pasinduog.eventsphere.service.CustomOAuth2UserService;
-import dev.pasinduog.eventsphere.service.JwtService;
+import dev.pasinduog.eventsphere.service.OAuth2CodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,12 +21,12 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtAuthFilter jwtAuthFilter;
-    private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final OAuth2CodeService oAuth2CodeService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
@@ -35,7 +34,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // අනිවාර්යයි!
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/ws-event-chat/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/users/register", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/ws-event-chat/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -48,12 +47,8 @@ public class SecurityConfig {
                             DefaultOAuth2User oauthUser = (DefaultOAuth2User) authentication.getPrincipal();
                             if (oauthUser != null && oauthUser.getAttribute("email") != null) {
                                 String email = oauthUser.getAttribute("email");
-
-                                User user = userRepository.findByEmail(email)
-                                        .orElseThrow(() -> new RuntimeException("User not found"));
-
-                                String token = jwtService.generateToken(user);
-                                response.sendRedirect("http://localhost:4200/login?token=" + token);
+                                String code = oAuth2CodeService.generateCode(email);
+                                response.sendRedirect("http://localhost:4200/login?code=" + code);
                             } else {
                                 response.sendRedirect("http://localhost:4200/login?error=github_email_missing");
                             }

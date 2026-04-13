@@ -3,16 +3,16 @@
 
 -- 1. USERS (10 Records - Admins, Speakers, Attendees)
 INSERT INTO users (id, full_name, email, password_hash, role, skills_and_interests) VALUES
-    ('886a8539-5426-4c95-b50c-c54d72e55d28', 'Pasindu Owa Gamage', 'admin1@gmail.com', '$2a$10$dXJ3SWoG7P50lGmMkkmwe.20cQQubK3.HCGJvuPEs4r3wX1fGjTMW', 'ADMIN', 'System Architecture, Spring Boot, Angular'),
-    ('eb334f13-7461-4d28-9e0e-7b933a5e5e4e', 'Kasun Perera', 'admin2@gmail.com', '$2a$10$dXJ3SWoG7P50lGmMkkmwe.20cQQubK3.HCGJvuPEs4r3wX1fGjTMW', 'ADMIN', 'Event Management, Marketing'),
-    ('1ea3c9fd-ad68-4105-8220-3a15694bc083', 'Dr. Ruwan Kumara', 'speaker1@gmail.com', '$2a$10$dXJ3SWoG7P50lGmMkkmwe.20cQQubK3.HCGJvuPEs4r3wX1fGjTMW', 'SPEAKER', 'AI, Machine Learning, Python'),
-    ('94d5ca84-a17c-45ed-8506-cf4220f5fa80', 'Sarah Jenkins', 'speaker2@gmail.com', '$2a$10$dXJ3SWoG7P50lGmMkkmwe.20cQQubK3.HCGJvuPEs4r3wX1fGjTMW', 'SPEAKER', 'Cloud Computing, AWS, DevOps'),
-    ('7743f6b1-d520-4a8f-b7a5-18e1d384e0f4', 'Nimali Silva', 'nimali@gmail.com', '$2a$10$dXJ3SWoG7P50lGmMkkmwe.20cQQubK3.HCGJvuPEs4r3wX1fGjTMW', 'ATTENDEE', 'Java, Spring Boot, Looking for Internships'),
-    ('280ac445-578a-46c6-b879-7816c7c691bc', 'Chamara Fernando', 'chamara@gmail.com', '$2a$10$dXJ3SWoG7P50lGmMkkmwe.20cQQubK3.HCGJvuPEs4r3wX1fGjTMW', 'ATTENDEE', 'Angular, Frontend Development, UI/UX'),
-    ('67f35b78-02fe-4879-8fe5-04d3633d5a56', 'Lahiru Senanayake', 'lahiru@gmail.com', '$2a$10$dXJ3SWoG7P50lGmMkkmwe.20cQQubK3.HCGJvuPEs4r3wX1fGjTMW', 'ATTENDEE', 'Microservices, Docker, Kubernetes'),
-    ('f8bcd1ca-8ee9-4b29-a689-ee691614dd8d', 'Gayantha De Silva', 'gayantha@gmail.com', '$2a$10$dXJ3SWoG7P50lGmMkkmwe.20cQQubK3.HCGJvuPEs4r3wX1fGjTMW', 'ATTENDEE', 'Looking for open-source contributors, Java'),
-    ('a3affe9d-1b0e-444e-a883-a24221f9aeb2', 'Sanduni Perera', 'sanduni@gmail.com', '$2a$10$dXJ3SWoG7P50lGmMkkmwe.20cQQubK3.HCGJvuPEs4r3wX1fGjTMW', 'ATTENDEE', 'Data Science, Gemini AI APIs'),
-    ('5ff6e1d8-fa5c-4ff3-8e69-8d41ae1f728d', 'Tharindu Bandara', 'tharindu@gmail.com', '$2a$10$dXJ3SWoG7P50lGmMkkmwe.20cQQubK3.HCGJvuPEs4r3wX1fGjTMW', 'ATTENDEE', 'Spring Boot, Backend Development');
+    ('886a8539-5426-4c95-b50c-c54d72e55d28', 'Pasindu Owa Gamage', 'admin1@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ADMIN', 'System Architecture, Spring Boot, Angular'),
+    ('eb334f13-7461-4d28-9e0e-7b933a5e5e4e', 'Kasun Perera', 'admin2@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ADMIN', 'Event Management, Marketing'),
+    ('1ea3c9fd-ad68-4105-8220-3a15694bc083', 'Dr. Ruwan Kumara', 'speaker1@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'SPEAKER', 'AI, Machine Learning, Python'),
+    ('94d5ca84-a17c-45ed-8506-cf4220f5fa80', 'Sarah Jenkins', 'speaker2@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'SPEAKER', 'Cloud Computing, AWS, DevOps'),
+    ('7743f6b1-d520-4a8f-b7a5-18e1d384e0f4', 'Nimali Silva', 'nimali@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Java, Spring Boot, Looking for Internships'),
+    ('280ac445-578a-46c6-b879-7816c7c691bc', 'Chamara Fernando', 'chamara@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Angular, Frontend Development, UI/UX'),
+    ('67f35b78-02fe-4879-8fe5-04d3633d5a56', 'Lahiru Senanayake', 'lahiru@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Microservices, Docker, Kubernetes'),
+    ('f8bcd1ca-8ee9-4b29-a689-ee691614dd8d', 'Gayantha De Silva', 'gayantha@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Looking for open-source contributors, Java'),
+    ('a3affe9d-1b0e-444e-a883-a24221f9aeb2', 'Sanduni Perera', 'sanduni@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Data Science, Gemini AI APIs'),
+    ('5ff6e1d8-fa5c-4ff3-8e69-8d41ae1f728d', 'Tharindu Bandara', 'tharindu@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Spring Boot, Backend Development');
 
 -- 2. EVENTS (10 Records)
 INSERT INTO events (id, organizer_id, title, description, start_time, end_time, max_attendees, status) VALUES
