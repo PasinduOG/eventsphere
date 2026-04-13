@@ -76,7 +76,7 @@ public class SecurityConfig {
     }
 
     private String buildFrontendLoginRedirect(String parameterName, String parameterValue) {
-        return UriComponentsBuilder.fromHttpUrl(frontendBaseUrl)
+        return UriComponentsBuilder.fromUriString(frontendBaseUrl)
                 .path("/login")
                 .queryParam(parameterName, parameterValue)
                 .build()

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,9 +28,9 @@ public class User implements UserDetails {
 
 
     @Override
-    @NullMarked
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.role));
+        String effectiveRole = (this.role != null) ? this.role : "ATTENDEE";
+        return List.of(new SimpleGrantedAuthority(effectiveRole));
     }
 
     @Override
@@ -40,7 +39,6 @@ public class User implements UserDetails {
     }
 
     @Override
-    @NullMarked
     public String getUsername() {
         return this.email;
     }
