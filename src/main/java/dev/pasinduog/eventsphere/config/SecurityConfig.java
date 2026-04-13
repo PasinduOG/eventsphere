@@ -4,6 +4,7 @@ import dev.pasinduog.eventsphere.filter.JwtAuthFilter;
 import dev.pasinduog.eventsphere.service.CustomOAuth2UserService;
 import dev.pasinduog.eventsphere.service.OAuth2CodeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -27,6 +29,9 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtAuthFilter jwtAuthFilter;
     private final OAuth2CodeService oAuth2CodeService;
+
+    @Value("${app.frontend.base-url}")
+    private String frontendBaseUrl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
@@ -57,9 +62,9 @@ public class SecurityConfig {
                             if (oauthUser != null && oauthUser.getAttribute("email") != null) {
                                 String email = oauthUser.getAttribute("email");
                                 String code = oAuth2CodeService.generateCode(email);
-                                response.sendRedirect("http://localhost:4200/login?code=" + code);
+                                response.sendRedirect(buildFrontendLoginRedirect("code", code));
                             } else {
-                                response.sendRedirect("http://localhost:4200/login?error=github_email_missing");
+                                response.sendRedirect(buildFrontendLoginRedirect("error", "github_email_missing"));
                             }
                         })
                 )
@@ -70,10 +75,18 @@ public class SecurityConfig {
         return http.build();
     }
 
+    private String buildFrontendLoginRedirect(String parameterName, String parameterValue) {
+        return UriComponentsBuilder.fromHttpUrl(frontendBaseUrl)
+                .path("/login")
+                .queryParam(parameterName, parameterValue)
+                .build()
+                .toUriString();
+    }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedOrigins(List.of(frontendBaseUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);
