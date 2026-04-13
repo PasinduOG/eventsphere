@@ -7,7 +7,7 @@ import dev.pasinduog.eventsphere.model.User;
 public interface UserService {
     boolean registerUser(RegisterRequest request);
     UserResponse getUserByEmail(String email);
-    User getUserById(String userId);
+    UserResponse getUserById(String userId);
     boolean updateUser(User user);
     User getUserEntityByEmail(String email);
 }

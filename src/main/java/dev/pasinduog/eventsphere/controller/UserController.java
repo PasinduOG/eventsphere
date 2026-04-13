@@ -24,6 +24,12 @@ public class UserController {
         return userService.getUserByEmail(email);
     }
 
+    @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('ORGANIZER')")
+    UserResponse getUserById(@RequestParam String userId) {
+        return userService.getUserById(userId);
+    }
+
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
     UserResponse getCurrentUser(Principal principal) {
