@@ -65,7 +65,7 @@ public class AppConfig {
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")
-                                        .description("Enter your JWT token. You can obtain it from the /api/auth/login endpoint.")
+                                        .description("Enter your JWT token. You can obtain it from the /api/v1/auth/login endpoint.")
                         ));
     }
 }
