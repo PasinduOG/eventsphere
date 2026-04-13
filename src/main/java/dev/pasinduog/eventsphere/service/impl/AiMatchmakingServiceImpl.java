@@ -31,10 +31,10 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
     private final AiMatchSuggestionRepository aiMatchSuggestionRepository;
     private final EventRegistrationRepository eventRegistrationRepository;
 
-    @Value("${gemini.api.key}")
+    @Value("${Gemini.api.key}")
     private String apiKey;
 
-    @Value("${gemini.api.url}")
+    @Value("${Gemini.api.url}")
     private String apiUrl;
 
     @Override
