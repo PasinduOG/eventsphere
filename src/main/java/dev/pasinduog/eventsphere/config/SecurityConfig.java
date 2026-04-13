@@ -34,7 +34,16 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // අනිවාර්යයි!
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/users/register", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/ws-event-chat/**").permitAll()
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/api/v1/users/register",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/ws-event-chat/**",
+                                "/oauth2/authorization/**",
+                                "/login/oauth2/code/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
