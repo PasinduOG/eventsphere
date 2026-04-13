@@ -74,9 +74,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     new ParameterizedTypeReference<>() {}
             );
         } catch (RestClientException ex) {
+            logger.warning("Failed to fetch email from GitHub API: " + ex.getMessage());
             throw new OAuth2AuthenticationException(
                     new OAuth2Error("github_email_fetch_failed",
-                            "Failed to fetch email from GitHub: " + ex.getMessage(), null));
+                            "Unable to retrieve email address from GitHub. Please ensure your GitHub account has a verified primary email.", null));
         }
 
         List<Map<String, Object>> emails = response.getBody();
