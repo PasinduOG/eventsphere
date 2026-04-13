@@ -79,7 +79,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
         String inSql = String.join(",", java.util.Collections.nCopies(ids.size(), "?"));
         String sql = "SELECT id, full_name, email, `role`, password_hash, skills_and_interests, created_at FROM users WHERE id IN (" + inSql + ")";
-        return jdbcTemplate.query(sql, rowMapper());
+        return jdbcTemplate.query(sql, rowMapper(), ids.toArray());
     }
 
     @Override
