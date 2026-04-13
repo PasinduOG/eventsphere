@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
@@ -35,7 +36,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Value("#{'${security.admin-emails:}'.empty ? {} : '${security.admin-emails:}'.split(',')}")
-    private final List<String> adminEmails;
+    private List<String> adminEmails;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -64,12 +65,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         headers.setBearerAuth(token);
         HttpEntity<String> entity = new HttpEntity<>("", headers);
 
-        ResponseEntity<List<Map<String, Object>>> response = restTemplate.exchange(
-                "https://api.github.com/user/emails",
-                HttpMethod.GET,
-                entity,
-                new ParameterizedTypeReference<>() {}
-        );
+        ResponseEntity<List<Map<String, Object>>> response;
+        try {
+            response = restTemplate.exchange(
+                    "https://api.github.com/user/emails",
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<>() {}
+            );
+        } catch (RestClientException ex) {
+            throw new OAuth2AuthenticationException(
+                    new OAuth2Error("github_email_fetch_failed",
+                            "Failed to fetch email from GitHub: " + ex.getMessage(), null));
+        }
 
         List<Map<String, Object>> emails = response.getBody();
         if (emails != null) {
