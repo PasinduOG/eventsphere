@@ -9,4 +9,5 @@ public interface UserService {
     UserResponse getUserByEmail(String email);
     User getUserById(String userId);
     boolean updateUser(User user);
+    User getUserEntityByEmail(String email);
 }

@@ -24,6 +24,7 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}/matches")
+    @PreAuthorize("isAuthenticated()")
     List<MatchSuggestionResponse> getMatchSuggestions(@PathVariable String eventId, @RequestParam String userId) {
         return aiMatchmakingService.getMatchSuggestions(eventId, userId);
     }
@@ -41,6 +42,7 @@ public class EventController {
     }
 
     @PostMapping("/{eventId}/matchmaking")
+    @PreAuthorize("isAuthenticated()")
     AiMatchResult generateNetworkingMatches(@PathVariable String eventId, @RequestParam String userId){
         return aiMatchmakingService.generateMatchesForUser(eventId, userId);
     }

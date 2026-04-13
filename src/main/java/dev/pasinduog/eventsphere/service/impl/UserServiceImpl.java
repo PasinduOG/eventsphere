@@ -58,4 +58,9 @@ public class UserServiceImpl implements UserService {
     public boolean updateUser(User user) {
         return userRepository.update(user);
     }
+
+    @Override
+    public User getUserEntityByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
 }

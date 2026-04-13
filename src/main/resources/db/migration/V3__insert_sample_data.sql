@@ -1,6 +1,9 @@
 -- V3__insert_sample_data.sql
 -- Insert Sample Data for Testing
 
+-- 0.1. ROLE (3 Records)
+INSERT INTO roles (name) VALUES ('ADMIN'), ('ATTENDEE'), ('SPEAKER');
+
 -- 1. USERS (10 Records - Admins, Speakers, Attendees)
 INSERT INTO users (id, full_name, email, password_hash, role, skills_and_interests) VALUES
     ('886a8539-5426-4c95-b50c-c54d72e55d28', 'Pasindu Owa Gamage', 'admin1@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ADMIN', 'System Architecture, Spring Boot, Angular'),
@@ -13,6 +16,9 @@ INSERT INTO users (id, full_name, email, password_hash, role, skills_and_interes
     ('f8bcd1ca-8ee9-4b29-a689-ee691614dd8d', 'Gayantha De Silva', 'gayantha@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Looking for open-source contributors, Java'),
     ('a3affe9d-1b0e-444e-a883-a24221f9aeb2', 'Sanduni Perera', 'sanduni@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Data Science, Gemini AI APIs'),
     ('5ff6e1d8-fa5c-4ff3-8e69-8d41ae1f728d', 'Tharindu Bandara', 'tharindu@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Spring Boot, Backend Development');
+
+-- 0.2. EVENT STATUS (4 Records)
+INSERT INTO event_statuses (name) VALUES ('UPCOMING'), ('LIVE'), ('COMPLETED'), ('UNAVAILABLE');
 
 -- 2. EVENTS (10 Records)
 INSERT INTO events (id, organizer_id, title, description, start_time, end_time, max_attendees, status) VALUES
