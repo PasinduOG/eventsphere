@@ -3,12 +3,15 @@ package dev.pasinduog.eventsphere.controller;
 import dev.pasinduog.eventsphere.dto.AiMatchResult;
 import dev.pasinduog.eventsphere.dto.MatchSuggestionResponse;
 import dev.pasinduog.eventsphere.model.Event;
+import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.service.AiMatchmakingService;
 import dev.pasinduog.eventsphere.service.EventService;
+import dev.pasinduog.eventsphere.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -17,6 +20,7 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
     private final AiMatchmakingService aiMatchmakingService;
+    private final UserService userService;
 
     @GetMapping("/upcoming")
     List<Event> getUpcomingEvents() {
@@ -25,25 +29,57 @@ public class EventController {
 
     @GetMapping("/{eventId}/matches")
     @PreAuthorize("isAuthenticated()")
-    List<MatchSuggestionResponse> getMatchSuggestions(@PathVariable String eventId, @RequestParam String userId) {
-        return aiMatchmakingService.getMatchSuggestions(eventId, userId);
+    List<MatchSuggestionResponse> getMatchSuggestions(@PathVariable String eventId, Principal principal) {
+        User currentUser = userService.getUserEntityByEmail(principal.getName());
+        return aiMatchmakingService.getMatchSuggestions(eventId, currentUser.getId());
     }
 
-    @PostMapping
-    @PreAuthorize("hasAuthority('ORGANIZER') or hasAuthority('ADMIN')")
-    boolean createEvent(@RequestBody Event event){
-        return eventService.createEvent(event);
-    }
 
     @PostMapping("/{eventId}/register")
     @PreAuthorize("isAuthenticated()")
-    boolean registerEvent(@PathVariable String eventId, @RequestParam String userId){
-        return eventService.registerUserForEvent(eventId, userId);
+    boolean registerForEvent(@PathVariable String eventId, Principal principal) {
+        User currentUser = userService.getUserEntityByEmail(principal.getName());
+        return eventService.registerUserForEvent(eventId, currentUser.getId());
     }
 
     @PostMapping("/{eventId}/matchmaking")
     @PreAuthorize("isAuthenticated()")
-    AiMatchResult generateNetworkingMatches(@PathVariable String eventId, @RequestParam String userId){
-        return aiMatchmakingService.generateMatchesForUser(eventId, userId);
+    AiMatchResult generateNetworkingMatches(@PathVariable String eventId, Principal principal) {
+        User currentUser = userService.getUserEntityByEmail(principal.getName());
+        return aiMatchmakingService.generateMatchesForUser(eventId, currentUser.getId());
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('ORGANIZER') or hasAuthority('ADMIN')")
+    boolean createEvent(@RequestBody Event event, Principal principal) {
+        User currentUser = userService.getUserEntityByEmail(principal.getName());
+        event.setOrganizerId(currentUser.getId());
+        return eventService.createEvent(event);
+    }
+
+    @PutMapping("/{eventId}")
+    @PreAuthorize("hasAuthority('ORGANIZER') or hasAuthority('ADMIN')")
+    boolean updateEvent(@PathVariable String eventId, @RequestBody Event event, Principal principal) {
+        User currentUser = userService.getUserEntityByEmail(principal.getName());
+        event.setOrganizerId(currentUser.getId());
+        return eventService.updateEvent(event, eventId);
+    }
+
+    @PutMapping("/{eventId}/cancel")
+    @PreAuthorize("hasAuthority('ORGANIZER') or hasAuthority('ADMIN')")
+    boolean cancelEvent(@PathVariable String eventId) {
+        return eventService.cancelEvent(eventId);
+    }
+
+    @DeleteMapping("/{eventId}/delete")
+    @PreAuthorize("hasAuthority('ORGANIZER') or hasAuthority('ADMIN')")
+    boolean softDeleteEvent(@PathVariable String eventId) {
+        return eventService.softDelete(eventId);
+    }
+
+    @DeleteMapping("/{eventId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    boolean deleteEvent(@PathVariable String eventId) {
+        return eventService.delete(eventId);
     }
 }

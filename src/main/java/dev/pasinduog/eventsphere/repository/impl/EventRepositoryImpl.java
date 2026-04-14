@@ -34,6 +34,7 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public boolean save(Event event) {
         try {
+            if (event.getOrganizerId() == null) return false;
             String sql = "INSERT INTO events (id, organizer_id, title, description, start_time, end_time, max_attendees, status) VALUES (?,?,?,?,?,?,?,?)";
             return jdbcTemplate.update(sql,
                     event.getId(),
@@ -50,9 +51,56 @@ public class EventRepositoryImpl implements EventRepository {
     }
 
     @Override
+    public boolean update(Event event) {
+        try {
+            if (event.getOrganizerId() == null) return false;
+            String sql = "UPDATE events SET organizer_id = ?, title = ?, description = ?, start_time = ?, end_time = ?, " +
+                    "max_attendees = ?, status = ? WHERE id = ?";
+            return jdbcTemplate.update(sql,
+                    event.getOrganizerId(),
+                    event.getTitle(),
+                    event.getDescription(),
+                    event.getStartTime(),
+                    event.getEndTime(),
+                    event.getMaxAttendees(),
+                    event.getStatus(),
+                    event.getId()) > 0;
+        } catch (DuplicateKeyException e) {
+            throw new EventAlreadyExistsException(event.getTitle());
+        }
+    }
+
+    @Override
+    public boolean cancelEvent(String eventId) {
+        String sql = "UPDATE events SET status = 'CANCELLED' WHERE id = ?";
+        return jdbcTemplate.update(sql, eventId) > 0;
+    }
+
+    @Override
+    public boolean softDelete(String eventId) {
+        String sql = "UPDATE events SET status = 'UNAVAILABLE' WHERE id = ?";
+        return jdbcTemplate.update(sql, eventId) > 0;
+    }
+
+    @Override
+    public boolean delete(String eventId) {
+        String sql = "DELETE FROM events WHERE id = ?";
+        return jdbcTemplate.update(sql, eventId) > 0;
+    }
+
+    @Override
     public Optional<Event> findById(String id) {
-        String sql =  "SELECT id, organizer_id, title, description, start_time, end_time, max_attendees, status, created_at FROM events WHERE id = ?";
+        String sql = "SELECT id, organizer_id, title, description, start_time, end_time, max_attendees, status, " +
+                "created_at FROM events WHERE id = ? AND status NOT IN ('CANCELLED', 'UNAVAILABLE')";
         return jdbcTemplate.query(sql, rowMapper(), id).stream().findFirst();
+    }
+
+    @Override
+    public List<Event> findByOrganizerEmail(String email) {
+        String sql = "SELECT e.* FROM events e " +
+                "INNER JOIN users u ON e.organizer_id = u.id " +
+                "WHERE u.email = ? AND e.status NOT IN ('CANCELLED', 'UNAVAILABLE')";
+        return jdbcTemplate.query(sql, rowMapper(), email);
     }
 
     @Override

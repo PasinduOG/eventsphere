@@ -7,14 +7,14 @@ import dev.pasinduog.eventsphere.repository.EventRegistrationRepository;
 import dev.pasinduog.eventsphere.repository.EventRepository;
 import dev.pasinduog.eventsphere.service.EventService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
-@Repository
+@Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
@@ -26,6 +26,37 @@ public class EventServiceImpl implements EventService {
             event.setId(UUID.randomUUID().toString());
         }
         return eventRepository.save(event);
+    }
+
+    @Override
+    public boolean updateEvent(Event event, String eventId) {
+        if (event.getId() == null || event.getId().isEmpty()) {
+            event.setId(eventId);
+        }
+        if (eventRepository.findById(eventId).isEmpty())
+            throw new EventNotFoundException("Update failed. Event not found");
+        return eventRepository.update(event);
+    }
+
+    @Override
+    public boolean cancelEvent(String eventId) {
+        if (eventRepository.findById(eventId).isEmpty())
+            throw new EventNotFoundException("Update failed. Event not found");
+        return eventRepository.cancelEvent(eventId);
+    }
+
+    @Override
+    public boolean softDelete(String eventId) {
+        if (eventRepository.findById(eventId).isEmpty())
+            throw new EventNotFoundException("Update failed. Event not found");
+        return eventRepository.softDelete(eventId);
+    }
+
+    @Override
+    public boolean delete(String eventId) {
+        if (eventRepository.findById(eventId).isEmpty())
+            throw new EventNotFoundException("Update failed. Event not found");
+        return eventRepository.delete(eventId);
     }
 
     @Override
