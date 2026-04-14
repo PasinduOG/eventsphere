@@ -1,15 +1,26 @@
 -- V1__init_schema.sql
 -- Database: virtual_events_db (MySQL)
 
+-- 0.1 ROLES
+CREATE TABLE roles (
+    name VARCHAR(50) PRIMARY KEY
+);
+
+-- 0.2 EVENT STATUSES
+CREATE TABLE event_statuses (
+    name VARCHAR(50) PRIMARY KEY
+);
+
 -- 1. USERS TABLE
 CREATE TABLE users (
     id VARCHAR(36) PRIMARY KEY,
     full_name VARCHAR(150) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    role ENUM('ADMIN', 'ATTENDEE', 'SPEAKER') DEFAULT 'ATTENDEE',
+    role VARCHAR(50) DEFAULT 'ATTENDEE',
     skills_and_interests TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (role) REFERENCES roles(name)
 );
 
 -- 2. EVENTS TABLE
@@ -21,9 +32,10 @@ CREATE TABLE events (
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     max_attendees INT NOT NULL,
-    status ENUM('UPCOMING', 'LIVE', 'COMPLETED') DEFAULT 'UPCOMING',
+    status VARCHAR(50) DEFAULT 'UPCOMING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (organizer_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (organizer_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (status) REFERENCES event_statuses(name)
 );
 
 -- 3. EVENT REGISTRATIONS (TICKETING)

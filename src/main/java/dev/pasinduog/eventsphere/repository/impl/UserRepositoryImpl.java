@@ -24,6 +24,20 @@ public class UserRepositoryImpl implements UserRepository {
             user.setFullName(rs.getString("full_name"));
             user.setEmail(rs.getString("email"));
             user.setRole(rs.getString("role"));
+            user.setPasswordHash(rs.getString("password_hash"));
+            user.setSkillsAndInterests(rs.getString("skills_and_interests"));
+            user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            return user;
+        });
+    }
+
+    private RowMapper<User> customRowMapper() {
+        return ((rs, rowNum) -> {
+            User user = new User();
+            user.setId(rs.getString("id"));
+            user.setFullName(rs.getString("full_name"));
+            user.setEmail(rs.getString("email"));
+            user.setRole(rs.getString("role"));
             user.setSkillsAndInterests(rs.getString("skills_and_interests"));
             user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
             return user;
@@ -47,8 +61,14 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public boolean update(User user) {
+        String sql = "UPDATE users SET full_name = ?, skills_and_interests = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, user.getFullName(), user.getSkillsAndInterests(), user.getId()) > 0;
+    }
+
+    @Override
     public Optional<User> findById(String id) {
-        String sql = "SELECT id, full_name, email, `role`, skills_and_interests, created_at FROM users WHERE id = ?";
+        String sql = "SELECT id, full_name, email, `role`, password_hash, skills_and_interests, created_at FROM users WHERE id = ?";
         return jdbcTemplate.query(sql, rowMapper(), id).stream().findFirst();
     }
 
@@ -58,19 +78,19 @@ public class UserRepositoryImpl implements UserRepository {
             return List.of();
         }
         String inSql = String.join(",", java.util.Collections.nCopies(ids.size(), "?"));
-        String sql = "SELECT id, full_name, email, `role`, skills_and_interests, created_at FROM users WHERE id IN (" + inSql + ")";
-        return jdbcTemplate.query(sql, rowMapper());
+        String sql = "SELECT id, full_name, email, `role`, password_hash, skills_and_interests, created_at FROM users WHERE id IN (" + inSql + ")";
+        return jdbcTemplate.query(sql, rowMapper(), ids.toArray());
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        String sql = "SELECT id, full_name, email, `role`, skills_and_interests, created_at FROM users WHERE email = ?";
+        String sql = "SELECT id, full_name, email, `role`, password_hash, skills_and_interests, created_at FROM users WHERE email = ?";
         return jdbcTemplate.query(sql, rowMapper(), email).stream().findFirst();
     }
 
     @Override
     public List<User> findAll() {
         String sql = "SELECT id, full_name, email, `role`, skills_and_interests, created_at FROM users";
-        return jdbcTemplate.query(sql, rowMapper());
+        return jdbcTemplate.query(sql, customRowMapper());
     }
 }

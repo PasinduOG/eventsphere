@@ -1,7 +1,7 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/virtual_events_db?createDatabaseIfNotExist=true
-    username: root
+    username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
@@ -9,7 +9,31 @@ spring:
     enabled: true
     baseline-on-migrate: true
 
-gemini:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope: user:email, read:user
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+Gemini:
   api:
     url: https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
     key: ${GEMINI_API_KEY}
+
+security:
+  jwt:
+    key: ${JWT_KEY}
+    expiration: 1640995200
+  admin-emails: pasinduogdev@gmail.com
+
+app:
+  frontend:
+    base-url: ${BASE_URL}
