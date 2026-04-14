@@ -20,11 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
@@ -106,7 +102,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setId(UUID.randomUUID().toString());
             user.setFullName(name);
             user.setEmail(email);
-            user.setPasswordHash(passwordEncoder.encode(UUID.randomUUID().toString()));
+            user.setPasswordHash(Objects.requireNonNull(passwordEncoder.encode(UUID.randomUUID().toString())));
             if (adminEmails.contains(email)) {
                 user.setRole("ADMIN");
             } else {

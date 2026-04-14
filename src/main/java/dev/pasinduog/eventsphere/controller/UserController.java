@@ -19,13 +19,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/by-email")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('ORGANIZER')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     UserResponse getUserByEmail(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('ORGANIZER')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     UserResponse getUserById(@RequestParam String userId) {
         return userService.getUserById(userId);
     }
