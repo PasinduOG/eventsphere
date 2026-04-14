@@ -75,4 +75,9 @@ public class EventServiceImpl implements EventService {
     public List<Event> getUpcomingEvents() {
         return eventRepository.findUpcomingEvents();
     }
+
+    @Override
+    public List<Event> getEventsByOrganizerEmail(String email) {
+        return eventRepository.findByOrganizerEmail(email);
+    }
 }

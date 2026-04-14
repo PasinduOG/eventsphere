@@ -82,4 +82,10 @@ public class EventController {
     boolean deleteEvent(@PathVariable String eventId) {
         return eventService.delete(eventId);
     }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    List<Event> findEventsByOrganizerEmail(@RequestParam String email) {
+        return eventService.getEventsByOrganizerEmail(email);
+    }
 }

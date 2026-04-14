@@ -12,4 +12,5 @@ public interface EventService {
     boolean delete(String eventId);
     boolean registerUserForEvent(String eventId, String userId);
     List<Event> getUpcomingEvents();
+    List<Event> getEventsByOrganizerEmail(String email);
 }
