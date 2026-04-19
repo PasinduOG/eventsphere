@@ -60,9 +60,7 @@ public class EventController {
     @PutMapping("/{eventId}")
     @PreAuthorize("hasAuthority('ORGANIZER') or hasAuthority('ADMIN')")
     boolean updateEvent(@PathVariable String eventId, @RequestBody Event event, Principal principal) {
-        User currentUser = userService.getUserEntityByEmail(principal.getName());
-        event.setOrganizerId(currentUser.getId());
-        return eventService.updateEvent(event, eventId);
+        return eventService.updateEvent(event, eventId, principal.getName());
     }
 
     @PutMapping("/{eventId}/cancel")
@@ -83,9 +81,15 @@ public class EventController {
         return eventService.delete(eventId);
     }
 
-    @GetMapping
+    @GetMapping("/by-organizer-email")
     @PreAuthorize("hasAuthority('ADMIN')")
     List<Event> findEventsByOrganizerEmail(@RequestParam String email) {
         return eventService.getEventsByOrganizerEmail(email);
+    }
+
+    @GetMapping("/my-events")
+    @PreAuthorize("hasAuthority('ORGANIZER') or hasAuthority('ADMIN')")
+    List<Event> getMyEvents(Principal principal) {
+        return eventService.getEventsByOrganizerEmail(principal.getName());
     }
 }

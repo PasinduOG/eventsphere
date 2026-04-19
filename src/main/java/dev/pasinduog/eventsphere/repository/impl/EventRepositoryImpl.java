@@ -54,10 +54,9 @@ public class EventRepositoryImpl implements EventRepository {
     public boolean update(Event event) {
         try {
             if (event.getOrganizerId() == null) return false;
-            String sql = "UPDATE events SET organizer_id = ?, title = ?, description = ?, start_time = ?, end_time = ?, " +
+            String sql = "UPDATE events SET title = ?, description = ?, start_time = ?, end_time = ?, " +
                     "max_attendees = ?, status = ? WHERE id = ?";
             return jdbcTemplate.update(sql,
-                    event.getOrganizerId(),
                     event.getTitle(),
                     event.getDescription(),
                     event.getStartTime(),
