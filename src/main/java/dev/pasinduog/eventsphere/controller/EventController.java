@@ -64,13 +64,13 @@ public class EventController {
     }
 
     @PutMapping("/{eventId}/cancel")
-    @PreAuthorize("hasAuthority('ORGANIZER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     boolean cancelEvent(@PathVariable String eventId) {
         return eventService.cancelEvent(eventId);
     }
 
     @DeleteMapping("/{eventId}/delete")
-    @PreAuthorize("hasAuthority('ORGANIZER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     boolean softDeleteEvent(@PathVariable String eventId) {
         return eventService.softDelete(eventId);
     }
