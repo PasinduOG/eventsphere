@@ -4,13 +4,13 @@ import dev.pasinduog.eventsphere.dto.LoginRequest;
 import dev.pasinduog.eventsphere.dto.LoginResponse;
 import dev.pasinduog.eventsphere.dto.OAuth2CallbackRequest;
 import dev.pasinduog.eventsphere.exception.InvalidAuthCodeException;
+import dev.pasinduog.eventsphere.exception.InvalidLoginException;
 import dev.pasinduog.eventsphere.exception.UserNotFoundException;
 import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.repository.UserRepository;
 import dev.pasinduog.eventsphere.service.JwtService;
 import dev.pasinduog.eventsphere.service.OAuth2CodeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +27,10 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("We couldn't find an account with that email."));
 
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-            throw new BadCredentialsException("Invalid credentials");
+            throw new InvalidLoginException("The password you entered is incorrect. Please try again.");
         }
         String token = jwtService.generateToken(user);
         return new LoginResponse(token);

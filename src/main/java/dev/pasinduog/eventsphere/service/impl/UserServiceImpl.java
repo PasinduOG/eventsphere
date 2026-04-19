@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean registerUser(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new UserAlreadyExistsException("Email already exists");
+            throw new UserAlreadyExistsException("A user with email '" + request.email() + "' already exists");
         }
         User user = new User();
         user.setId(UUID.randomUUID().toString());

@@ -2,12 +2,12 @@
 -- Insert Sample Data for Testing
 
 -- 0.1. ROLE (3 Records)
-INSERT INTO roles (name) VALUES ('ADMIN'), ('ATTENDEE'), ('SPEAKER');
+INSERT INTO roles (name) VALUES ('ADMIN'), ('ORGANIZER'), ('ATTENDEE'), ('SPEAKER');
 
 -- 1. USERS (10 Records - Admins, Speakers, Attendees)
 INSERT INTO users (id, full_name, email, password_hash, role, skills_and_interests) VALUES
     ('886a8539-5426-4c95-b50c-c54d72e55d28', 'Pasindu Owa Gamage', 'admin1@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ADMIN', 'System Architecture, Spring Boot, Angular'),
-    ('eb334f13-7461-4d28-9e0e-7b933a5e5e4e', 'Kasun Perera', 'admin2@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ADMIN', 'Event Management, Marketing'),
+    ('eb334f13-7461-4d28-9e0e-7b933a5e5e4e', 'Kasun Perera', 'organizer2@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ORGANIZER', 'Event Management, Organizing'),
     ('1ea3c9fd-ad68-4105-8220-3a15694bc083', 'Dr. Ruwan Kumara', 'speaker1@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'SPEAKER', 'AI, Machine Learning, Python'),
     ('94d5ca84-a17c-45ed-8506-cf4220f5fa80', 'Sarah Jenkins', 'speaker2@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'SPEAKER', 'Cloud Computing, AWS, DevOps'),
     ('7743f6b1-d520-4a8f-b7a5-18e1d384e0f4', 'Nimali Silva', 'nimali@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Java, Spring Boot, Looking for Internships'),
@@ -18,7 +18,7 @@ INSERT INTO users (id, full_name, email, password_hash, role, skills_and_interes
     ('5ff6e1d8-fa5c-4ff3-8e69-8d41ae1f728d', 'Tharindu Bandara', 'tharindu@gmail.com', '$2a$10$.g3Buxksd/EBNCE8UGoPA.1jCjrJJBspKoh3dfg7e5Tq2OIRF2emi', 'ATTENDEE', 'Spring Boot, Backend Development');
 
 -- 0.2. EVENT STATUS (4 Records)
-INSERT INTO event_statuses (name) VALUES ('UPCOMING'), ('LIVE'), ('COMPLETED'), ('UNAVAILABLE');
+INSERT INTO event_statuses (name) VALUES ('UPCOMING'), ('LIVE'), ('COMPLETED'), ('CANCELLED'), ('UNAVAILABLE');
 
 -- 2. EVENTS (10 Records)
 INSERT INTO events (id, organizer_id, title, description, start_time, end_time, max_attendees, status) VALUES
