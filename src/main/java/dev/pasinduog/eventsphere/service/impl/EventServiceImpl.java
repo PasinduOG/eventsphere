@@ -50,21 +50,21 @@ public class EventServiceImpl implements EventService {
     @Override
     public boolean cancelEvent(String eventId) {
         if (eventRepository.findById(eventId).isEmpty())
-            throw new EventNotFoundException("Update failed. Event not found");
+            throw new EventNotFoundException("Cancel failed. Event not found");
         return eventRepository.cancelEvent(eventId);
     }
 
     @Override
     public boolean softDelete(String eventId) {
         if (eventRepository.findById(eventId).isEmpty())
-            throw new EventNotFoundException("Update failed. Event not found");
+            throw new EventNotFoundException("Remove failed. Event not found");
         return eventRepository.softDelete(eventId);
     }
 
     @Override
     public boolean delete(String eventId) {
         if (eventRepository.findById(eventId).isEmpty())
-            throw new EventNotFoundException("Update failed. Event not found");
+            throw new EventNotFoundException("Delete failed. Event not found");
         return eventRepository.delete(eventId);
     }
 
