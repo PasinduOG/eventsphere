@@ -90,7 +90,7 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public Optional<Event> findById(String id) {
         String sql = "SELECT id, organizer_id, title, description, start_time, end_time, max_attendees, status, " +
-                "created_at FROM events WHERE id = ? AND status NOT IN ('CANCELLED', 'UNAVAILABLE')";
+                "created_at FROM events WHERE id = ?";
         return jdbcTemplate.query(sql, rowMapper(), id).stream().findFirst();
     }
 
