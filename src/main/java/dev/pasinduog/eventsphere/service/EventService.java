@@ -13,4 +13,5 @@ public interface EventService {
     boolean registerUserForEvent(String eventId, String userId);
     List<Event> getUpcomingEvents();
     List<Event> getEventsByOrganizerEmail(String email);
+    Event getEventById(String id);
 }

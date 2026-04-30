@@ -27,6 +27,11 @@ public class EventController {
         return eventService.getUpcomingEvents();
     }
 
+    @GetMapping("/{eventId}")
+    Event getEventById(@PathVariable String eventId) {
+        return eventService.getEventById(eventId);
+    }
+
     @GetMapping("/{eventId}/matches")
     @PreAuthorize("isAuthenticated()")
     List<MatchSuggestionResponse> getMatchSuggestions(@PathVariable String eventId, Principal principal) {

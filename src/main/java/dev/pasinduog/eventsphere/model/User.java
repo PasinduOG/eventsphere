@@ -25,6 +25,8 @@ public class User implements UserDetails {
     private String email;
     private String passwordHash;
     private String role;
+    private boolean isPremium;
+    private int aiMatchCount;
     private String skillsAndInterests;
     private LocalDateTime createdAt;
 

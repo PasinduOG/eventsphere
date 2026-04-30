@@ -1,40 +1,30 @@
 package dev.pasinduog.eventsphere.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.pasinduog.eventsphere.dto.AiMatchResult;
-import dev.pasinduog.eventsphere.dto.GeminiRequest;
-import dev.pasinduog.eventsphere.dto.GeminiResponse;
-import dev.pasinduog.eventsphere.dto.UserResponse;
-import dev.pasinduog.eventsphere.dto.MatchSuggestionResponse;
+import dev.pasinduog.eventsphere.dto.*;
 import dev.pasinduog.eventsphere.exception.AiMatchmakingException;
+import dev.pasinduog.eventsphere.exception.LimitExceedException;
 import dev.pasinduog.eventsphere.exception.UserNotFoundException;
 import dev.pasinduog.eventsphere.model.AiMatchSuggestion;
 import dev.pasinduog.eventsphere.model.User;
 import dev.pasinduog.eventsphere.repository.AiMatchSuggestionRepository;
-import dev.pasinduog.eventsphere.repository.EventRegistrationRepository;
 import dev.pasinduog.eventsphere.repository.UserRepository;
 import dev.pasinduog.eventsphere.service.AiMatchmakingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class AiMatchmakingServiceImpl implements AiMatchmakingService {
     private final RestClient restClient;
     private final UserRepository userRepository;
-    private final ObjectMapper objectMapper;
     private final AiMatchSuggestionRepository aiMatchSuggestionRepository;
-    private final EventRegistrationRepository eventRegistrationRepository;
 
-    @Value("${Gemini.api.key}")
-    private String apiKey;
-
-    @Value("${Gemini.api.url}")
+    @Value("${ollama.api.url}")
     private String apiUrl;
 
     @Override
@@ -42,39 +32,52 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
         User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        List<String> registeredUserIds = eventRegistrationRepository.findUserIdsByEventId(eventId);
-
-        if (!registeredUserIds.contains(targetUserId)) {
-            throw new UserNotFoundException("Target user is not registered for this event!");
+        if (!targetUser.isPremium() && targetUser.getAiMatchCount() >= 3) {
+            throw new LimitExceedException("Free limit reached! You have used your 3 free AI matches. Please upgrade to Premium.");
         }
 
-        List<User> attendeesForMatchmaking = userRepository.findAll().stream()
-                .filter(u -> registeredUserIds.contains(u.getId()))
-                .filter(u -> !u.getId().equals(targetUserId))
-                .toList();
+        List<User> attendeesForMatchmaking = userRepository.findRandomAttendeesForMatchmaking(eventId, targetUserId, 50);
 
-        String prompt = buildPrompt(targetUser, attendeesForMatchmaking);
+        if (attendeesForMatchmaking.isEmpty()) {
+            throw new AiMatchmakingException("No other attendees found in this event to match with!");
+        }
 
-        GeminiResponse response = restClient.post()
-                .uri(apiUrl + "?key=" + apiKey)
-                .body(GeminiRequest.of(prompt))
-                .retrieve()
-                .body(GeminiResponse.class);
+        // 🔥 1. පිරිසිදුවට DTOs හදාගන්නවා (String කරන, Map කරන කෑලි අයින් කළා)
+        UserProfile target = new UserProfile(targetUser.getId(), targetUser.getSkillsAndInterests());
+        List<UserProfile> others = attendeesForMatchmaking.stream()
+                .map(user -> new UserProfile(user.getId(), user.getSkillsAndInterests())).toList();
 
-        Objects.requireNonNull(response, "Gemini API response cannot be null");
-        String aiResultString = response.getExtractedText();
+        AiMatchRequest requestPayload = new AiMatchRequest(target, others);
 
         try {
-            String cleanJson = aiResultString.replace("```json", "").replace("```", "").trim();
-            AiMatchResult matchResult = objectMapper.readValue(cleanJson, AiMatchResult.class);
+            // 🔥 ULTIMATE FIX: RestClient අයින් කරලා පරණ, ලෙඩ දෙන්නේ නැති RestTemplate එක පාවිච්චි කරනවා!
+            RestTemplate simpleRestTemplate = new org.springframework.web.client.RestTemplate();
+
+            // පේළි 5-6ක් තිබ්බ එක තනි පේළියෙන් යවනවා. කිසිම අමුතු Headers යන්නේ නෑ.
+            AiMatchResult matchResult = simpleRestTemplate.postForObject(
+                    apiUrl,
+                    requestPayload,
+                    AiMatchResult.class
+            );
+
+            if (matchResult == null || matchResult.suggestedUserId() == null) {
+                throw new AiMatchmakingException("Invalid response from Local AI.");
+            }
+
+            // ... මෙතනින් පල්ලෙහාට Validation ටිකයි DB Save කරන ටිකයි එහෙම්මමයි ...
+            boolean isValidId = attendeesForMatchmaking.stream()
+                    .anyMatch(u -> u.getId().equals(matchResult.suggestedUserId()));
+
+            if (!isValidId) {
+                throw new AiMatchmakingException("AI generated an invalid User ID. Please try again.");
+            }
 
             aiMatchSuggestionRepository.saveMatchSuggestion(
-                    eventId,
-                    targetUserId,
-                    matchResult.suggestedUserId(),
-                    matchResult.matchScore(),
-                    matchResult.matchReason()
+                    eventId, targetUserId, matchResult.suggestedUserId(),
+                    matchResult.matchScore(), matchResult.matchReason()
             );
+
+            userRepository.incrementAiMatchCount(targetUserId);
 
             return matchResult;
 
@@ -83,32 +86,6 @@ public class AiMatchmakingServiceImpl implements AiMatchmakingService {
         }
     }
 
-    @Override
-    public String buildPrompt(User targetUser, List<User> otherUsers) {
-        StringBuilder prompt = new StringBuilder();
-        prompt.append("You are an expert AI Networking Matchmaker for a Tech Event. ");
-        prompt.append("Find the best person to network with for the following Target User based on their skills and interests.\n\n");
-
-        prompt.append("Target User:\n");
-        prompt.append("- ID: ").append(targetUser.getId()).append("\n");
-        prompt.append("- Skills: ").append(targetUser.getSkillsAndInterests()).append("\n\n");
-
-        prompt.append("Available Attendees to match with:\n");
-        for (User u : otherUsers) {
-            prompt.append("- ID: ").append(u.getId())
-                    .append(" | Skills: ").append(u.getSkillsAndInterests()).append("\n");
-        }
-
-        prompt.append("\nAnalyze the Target User's skills against the Available Attendees. ");
-        prompt.append("Return the single BEST match as a JSON object strictly in this format without any markdown wrappers:\n");
-        prompt.append("{\n");
-        prompt.append("  \"suggestedUserId\": \"user_id_here\",\n");
-        prompt.append("  \"matchScore\": 95,\n");
-        prompt.append("  \"matchReason\": \"Short reason why they match\"\n");
-        prompt.append("}");
-
-        return prompt.toString();
-    }
 
     @Override
     public List<MatchSuggestionResponse> getMatchSuggestions(String eventId, String targetUserId) {

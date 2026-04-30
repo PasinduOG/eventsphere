@@ -89,4 +89,10 @@ public class EventServiceImpl implements EventService {
     public List<Event> getEventsByOrganizerEmail(String email) {
         return eventRepository.findByOrganizerEmail(email);
     }
+
+    @Override
+    public Event getEventById(String id) {
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+    }
 }
