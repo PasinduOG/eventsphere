@@ -12,4 +12,6 @@ public interface UserRepository {
     List<User> findByIds(List<String> ids);
     Optional<User> findByEmail(String email);
     List<User> findAll();
+    List<User> findRandomAttendeesForMatchmaking(String eventId, String excludeUserId, int limit);
+    void incrementAiMatchCount(String userId);
 }
